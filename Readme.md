@@ -1,7 +1,7 @@
 # Evil Twin Tool
 
 ### requirement
-* install scapy, faker ( library of scapy)
+* install scapy, faker (scapy's library)
 
 ### references
 * https://www.thepythoncode.com/search?q=scapy
