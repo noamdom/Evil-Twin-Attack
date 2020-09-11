@@ -24,6 +24,7 @@ line2="dhcp-range=10.0.0.10,10.0.0.100,8h\n"
 line3="dhcp-option=3,10.0.0.1\n" # dhcp address
 line4="dhcp-option=6,10.0.0.1\n" # dns address
 line5="address=/#/10.0.0.1\n"
+# routing by different os request
 line6="address=/clients3.google.com/10.0.0.1\naddress=/ipv6.msftncsi.com/10.0.0.1\naddress=/www.msftncsi.com/10.0.0.1\n"
 
 try:

