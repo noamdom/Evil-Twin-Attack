@@ -2,8 +2,8 @@
 
 ## background
 * This project is an exercise in a cyber course, and has only education
-goals
-* This tool use some theoretical topics whicl will be explained [below](#theoretical-topics)
+goals.
+* This tool use some theoretical topics whicl will be explained [below](#theoretical-topics).
 
 
 ### requirements 
