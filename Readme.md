@@ -7,8 +7,8 @@ goals
 
 
 ### requirements 
-* install scapy, 
-* apt-get install gnome-terminal
+* scapy 
+* gnome-terminal
 * dnsmasq
 * hostapd
 
