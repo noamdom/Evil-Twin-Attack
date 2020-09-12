@@ -19,7 +19,12 @@ reconnect the adapters and restart the process
 
 
 ## Theoretical Concepts
-### beacon frame
+
+### Libraries and used services
+* sccapy -  a python library to manipulate packtes
+* hostapd and dnsmasq - services for creating AP
+
+### Beacon frame - in sniff (a scapy function)
 * Becoan frame is one of the management frames in IEEE802.11 based WLAN
 * its contain all the information about the network
 * Becoan frame are transmitted periodically to announce the presence
@@ -29,7 +34,7 @@ reconnect the adapters and restart the process
     * Interval (TU) - This is the time interval between beacon transmission
     * SSID - service set ID -  the network name
 
-### iptables
+### Iptables - while playing with the firewall
 * Tables
     * Filter - default to go with this rules
     * NAT -  Network address translation
@@ -48,8 +53,9 @@ reconnect the adapters and restart the process
     * User define command , to manipulate the network traffic
     * As each chain is called the packet will check against the rule - in order
 
+## hostapd
 
-### References
+## References
 * https://www.thepythoncode.com/search?q=scapy
 * https://www.pentesteracademy.com/course?id=14
 * https://www.thepythoncode.com/article/create-fake-access-points-scapy

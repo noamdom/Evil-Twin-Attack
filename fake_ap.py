@@ -30,8 +30,11 @@ do_command('iptables -P FORWARD ACCEPT') #
 line = "python3 create_files.py " + sniffer_interface + " " + network_name
 do_command(line)
 
+ # start the AP
 do_command('dnsmasq -C dnsmasq.conf')
 do_command('hostapd hostapd.conf -B')
+
+# start the server for to broadcast our default page
 do_command('service apache2 start')
 do_command('route add default gw 10.0.0.1') # create fake gw
 time.sleep(1)
