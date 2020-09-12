@@ -3,7 +3,7 @@
 ## background
 * This project is an exercise in a cyber course, and has only education
 goals.
-* This tool use some theoretical topics whicl will be explained [below](#theoretical-topics).
+* This tool use some theoretical topics whicl will be explained [below](#theoretical-concepts).
 
 
 ### requirements 
@@ -18,7 +18,7 @@ goals.
 reconnect the adapters and restart the process
 
 
-## Theoretical Topics
+## Theoretical Concepts
 ### beacon frame
 * Becoan frame is one of the management frames in IEEE802.11 based WLAN
 * its contain all the information about the network
@@ -49,7 +49,7 @@ reconnect the adapters and restart the process
     * As each chain is called the packet will check against the rule - in order
 
 
-### references
+### References
 * https://www.thepythoncode.com/search?q=scapy
 * https://www.pentesteracademy.com/course?id=14
 * https://www.thepythoncode.com/article/create-fake-access-points-scapy
