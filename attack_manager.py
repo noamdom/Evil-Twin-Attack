@@ -219,7 +219,11 @@ def scan_clients(AP_id: int):
     This function get an index for AP in ap_list
     and sniff all the packets that pass between the clients and the AP, with limit time
     we the time scan is over it display all the client who connected to this AP
+    more info in readme
     Note: This function change the listening channel using threads
+
+
+
     :param AP_id: int - index in ap_list
     """
     global target_mac

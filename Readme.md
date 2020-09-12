@@ -24,6 +24,15 @@ reconnect the adapters and restart the process
 * sccapy -  a python library to manipulate packtes
 * hostapd and dnsmasq - services for creating AP
 
+## sniff function (from scapy doc)
+sniff has an argument prn that allows you to pass a function that executes
+ with each packet sniffed. The intended purpose of this function is to control 
+ how the packet prints out in the console allowing you to replace the default 
+ packet printing display with a format of your choice.
+ 
+The prn argument is defined as: function to apply to each packet.
+
+
 ### Beacon frame - in sniff (a scapy function)
 * Becoan frame is one of the management frames in IEEE802.11 based WLAN
 * its contain all the information about the network
@@ -50,10 +59,9 @@ reconnect the adapters and restart the process
     
         Traversal order : -> pre -> input -> forward -> output ->
 * Rules
-    * User define command , to manipulate the network traffic
+    * User define command ,to manipulate the network traffic
     * As each chain is called the packet will check against the rule - in order
 
-## hostapd
 
 ## References
 * https://www.thepythoncode.com/search?q=scapy
