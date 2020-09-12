@@ -199,6 +199,10 @@ def only_clients(pkt):
     This function get packet  and use a global variable 'target_mac' which is the AP address mac.
     It's analyze if the packet contain data about the client which connect to this AP, and if it is,
     The fucntion keep it in 'client_list'
+    packet format:
+    #   addr1: destination MAC
+    #   addr2: source MAC
+    #   addr3: Access Point MAC
     :param pkt: type of IEEE 802.11
     """
     global client_list
@@ -235,7 +239,6 @@ def scan_clients(AP_id: int):
     set_channel(int(channel))
 
     print("\nScanning for clients")
-    #    print("\nScanning for clinets:" ,rmac, "\tessid:" , addr ,  "\nscanning time:", time, "sec\n\nscanning...\n")
     channel_changer = Thread(target=change_channel)
     channel_changer.daemon = True
     channel_changer.start()
@@ -343,6 +346,7 @@ def APs_scanner() -> int:
     global start_scan
     user_input = input("Please enter the scanning time frame in seconds\n"
                        "hit enter for deauflt time of 15 sec\n")
+    # limit time for scanning and threads
     if user_input != '':
         search_timeout = int(user_input)
     start_scan = datetime.now()
@@ -458,9 +462,10 @@ def run_evil_twin():
         # step 2 - scan the the networks around
         print_msg("Step2 - AP's scanner")
         ap_id = APs_scanner()
-        network_name = ap_list[ap_id][NAME]
-        print("ap_id:", ap_id, "\tnetwork name", network_name)
-        if ap_id >= 0:
+
+        if ap_id != 'n' and ap_id >= 0:
+            network_name = ap_list[ap_id][NAME]
+            print("ap_id:", ap_id, "\tnetwork name", network_name)
             print_msg("Step 3 - Find Client")
             client_id = int(scan_clients(ap_id))
             print("client_id", client_id)
@@ -488,7 +493,7 @@ def run_evil_twin():
     except Exception as e:
         # step 3 - Back to managed mode
         print_msg("Exception: back to managed mode", False)
-        managed_mode()
+        managed_mode(sniffer_interface)
 
         print(R)
         print("-------------------------------")
