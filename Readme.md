@@ -11,6 +11,7 @@ goals.
 * gnome-terminal
 * dnsmasq
 * hostapd
+* locate the 'html' directory in '/var/www/html'
 
 
 ### Tips
