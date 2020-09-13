@@ -4,8 +4,6 @@ from scapy.all import *
 from scapy.layers.dot11 import Dot11, Dot11Beacon, Dot11Elt,  RadioTap, Dot11Deauth
 
 # ---- magic numbers ----------
-# ADDR = 0
-# ESSID = 0
 NAME = 0
 MAC_ADDR = 1
 CHANNEL = 2
