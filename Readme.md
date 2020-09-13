@@ -25,7 +25,7 @@ reconnect the adapters and restart the process
 * sccapy -  a python library to manipulate packtes
 * hostapd and dnsmasq - services for creating AP
 
-## Sniff function (from scapy doc)
+### Sniff function (from scapy doc)
 sniff has an argument prn that allows you to pass a function that executes
  with each packet sniffed. The intended purpose of this function is to control 
  how the packet prints out in the console allowing you to replace the default 
